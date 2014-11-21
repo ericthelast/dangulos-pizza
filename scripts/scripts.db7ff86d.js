@@ -3,6 +3,36 @@
   $scope.foo = 'bar';
   $scope.ingredients = [];
   $scope.total = 0;
+  $scope.order = {};
+
+  $scope.ingredients = [
+    {name: 'Ham', in_stock: true},
+    {name: 'Beef', in_stock: false},
+  ];
+
+  $scope.$watch('scope.order.quantity', function(n, o) {
+    if(n && n > 50) {
+      $scope.orderError = true;
+    }
+  })
+
+  $scope.submitOrder = function(valid) {
+    var authdata = window.btoa('admin:admin')
+    $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
+    $http({
+      url: 'http://127.0.0.1:8081/foop/',
+      method: 'POST',
+      data: $scope.order,
+      headers: {
+        'Content-type': 'application/hal+json',
+      }
+    }).success(function(data, status) {
+      console.log(data, status);
+    }).error(function(data, status) {
+            console.log(data, status);
+    })
+  }
+
   // Here is where you call your views url from drupal.
   // If this app is not on the same domain as your Drupal install you will
   // run into CORS issues.
